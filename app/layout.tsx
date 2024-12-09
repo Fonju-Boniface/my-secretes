@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider as NextThemesProvider, } from "next-themes";
+
+import ThemeDataProvider from "@/context/theme-data-provider";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,11 +30,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased ${inter.className}`}
       >
-        {children}
+       <NextThemesProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ThemeDataProvider>{children}</ThemeDataProvider>
+        </NextThemesProvider>
       </body>
     </html>
   );
