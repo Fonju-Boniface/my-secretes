@@ -70,3 +70,57 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: none; /* Background color of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(108, 107, 110); /* Color of the scrollbar thumb */
+  border-radius: 6px; /* Rounds the scrollbar thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background:rgb(85, 81, 85); /* Thumb color on hover */
+}
+/* globals.css or your CSS file */
+.custom-input {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
+html{
+  scroll-behavior: smooth;
+}
+
+
+.Bounce {
+  animation: bounce 2s linear infinite;
+}
+.Bounce:hover,
+.Bounce:focus {
+  animation: none;
+}
+@keyframes bounce {
+  0% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(-5px);
+  }
+}
+
+.topCheck{
+  position: sticky;
+  top: 20rem;
+}
