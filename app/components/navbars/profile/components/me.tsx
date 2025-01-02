@@ -1,3 +1,4 @@
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -7,6 +8,8 @@ import { ref, onValue } from "firebase/database";
 import { database } from "@/firebase/firebase";
 import { useToast } from "@/hooks/use-toast";
 
+
+// 
 interface ProfileData {
   imageUrl: string;
   name: string;

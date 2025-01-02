@@ -1,3 +1,4 @@
+"use client";
 import AboutHobbies from "./about/abouthobbies/AboutHobbies";
 import AboutMiss from "./about/aboutmission/AboutMiss";
 import AboutTextField from "./about/abouttext/AboutTextField";

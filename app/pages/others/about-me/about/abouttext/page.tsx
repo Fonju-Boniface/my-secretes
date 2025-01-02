@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { ref, set, onValue } from 'firebase/database';
 import { Button } from "@/components/ui/button";

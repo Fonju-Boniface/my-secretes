@@ -1,3 +1,4 @@
+"use client";
 // Import necessary modules and icons
 import { app } from '@/firebase/firebase';
 import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
