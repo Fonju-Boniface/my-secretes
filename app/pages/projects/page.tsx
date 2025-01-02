@@ -336,7 +336,6 @@ const Projects = () => {
               <div className="flex flex-col w-full justify-center items-center gap-[.1rem]">
                 <Link
                   href={`/pages/projects/${project.id}`}
-                  target="_blank"
                   className="text-primary mt-4 block font-semibold w-full"
                 >
                   <Button
