@@ -5,7 +5,7 @@ export const home = defineType({
   title: 'Home',
   type: 'document',
   fields: [
-    defineField({
+    defineField({ 
       name: 'title',
       title: 'Title',
       type: 'string',
