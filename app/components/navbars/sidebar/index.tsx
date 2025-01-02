@@ -6,13 +6,10 @@ import {
   X,
   Menu,
   Home,
-  Contact,
-  Star,
   Briefcase,
   User,
   Phone,
-  GraduationCap,
-  Globe,
+
 } from "lucide-react"; // Import X (close) and Menu (bars) icons
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Import usePathname from next/navigation
@@ -40,43 +37,7 @@ const links = [
     description: "Get in touch",
     icon: <Phone />,
   },
-  {
-    href: "/pages/experience",
-    label: "Experience",
-    description: "Get in touch",
-    icon: <Contact />,
-  },
-  {
-    href: "/pages/education",
-    label: "Education",
-    description: "Get in touch",
-    icon: <GraduationCap />,
-  },
-  {
-    href: "/pages/reviews",
-    label: "Reviews",
-    description: "Get in touch",
-    icon: <Star />,
-  },
-  // { href: "/pages/gallery", label: "Gallery", description: "Get in touch", icon: <Image  /> },
-  {
-    href: "/pages/socialsMedia",
-    label: "Globe",
-    description: "Get in touch",
-    icon: <Globe />,
-  },
-  // {
-  //   href: "/pages/blog",
-  //   label: "Blog ",
-  //   description: "Get in touch",
-  //   icon: <FileText />,
-  // },
-  // {
-  //   href: "/pages/settings",
-  //   label: "Settings",
-  //   description: "Get in touch",
-  //   icon: <Settings />,
-  // },
+ 
 ];
 
 const SideBar = () => {
