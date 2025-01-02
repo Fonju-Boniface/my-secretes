@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button"; // Import the Shadcn Button component
 import { Github, Linkedin, Twitter } from "lucide-react"; // 
 // Define an array of social media links

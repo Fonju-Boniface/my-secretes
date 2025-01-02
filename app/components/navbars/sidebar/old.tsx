@@ -12,14 +12,12 @@ import {
   User,
   Phone,
   GraduationCap,
-  Image,
   Settings,
   Globe,
   FileText,
 } from "lucide-react"; // Import X (close) and Menu (bars) icons
 import Link from "next/link";
 import { usePathname } from "next/navigation"; // Import usePathname from next/navigation
-import clsx from "clsx"; // Import clsx for conditional classes
 
 // Define an array of links
 const links = [
