@@ -1,27 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
 import { useState, useEffect } from "react";
 import { ref, push } from "firebase/database";
-import { getAuth, onAuthStateChanged } from "firebase/auth"; // Import Firebase Auth
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import { getAuth, onAuthStateChanged } from "firebase/auth"; 
+import PhoneInput, { parsePhoneNumber } from "react-phone-number-input"; 
+import "react-phone-number-input/style.css"; 
 import { Button } from "@/components/ui/button";
 import { database } from "@/firebase/firebase";
-import { useTheme } from "next-themes"; // Import useTheme from next-themes
+import { useTheme } from "next-themes"; 
 import { useToast } from "@/hooks/use-toast";
-
-import { Input } from "@/components/ui/input"; // Import ShadCN UI input components
+import { Input } from "@/components/ui/input"; 
 import Image from "next/image";
-type CountryData = {
-  name: string;
-  dialCode: string;
-  countryCode: string; // ISO 3166-1 alpha-2 code
-  format: string;
-};
 
 const ContactForm = () => {
-  const { toast } = useToast(); // Initialize the toast hook
+  const { toast } = useToast(); 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -71,13 +62,23 @@ const ContactForm = () => {
     setFormErrors((errors) => ({ ...errors, [name]: !value }));
   };
 
-  const handlePhoneChange = (value: string, countryData: CountryData) => {
-    setFormData((data) => ({
-      ...data,
-      phone: value,
-      country: countryData.name, // Use the full country name
-    }));
-    setFormErrors((errors) => ({ ...errors, phone: !value }));
+  const handlePhoneChange = (value?: string) => {
+    if (value) {
+      try {
+        // Parse the phone number and extract country name
+        const phoneNumber = parsePhoneNumber(value);
+        const country = phoneNumber?.country || ""; // Get the country name from the phone number
+
+        setFormData((data) => ({
+          ...data,
+          phone: value,
+          country, // Set country field to the country name
+        }));
+        setFormErrors((errors) => ({ ...errors, phone: !value }));
+      } catch (error) {
+        console.error("Error parsing phone number:", error);
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -120,7 +121,7 @@ const ContactForm = () => {
         description: "Form submitted successfully!",
         variant: "default",
       });
-setNotification("Form submitted successfully!");
+      setNotification("Form submitted successfully!");
       setFormData({
         firstName: "",
         lastName: "",
@@ -155,13 +156,11 @@ setNotification("Form submitted successfully!");
 
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-
   return (
     <div className="w-full flex flex-col justify-center min-h-[calc(100vh-4rem)]  items-center p-1">
       <h2 className="text-3xl font-bold mb-6">Contact Me</h2>
       <form onSubmit={handleSubmit} className="w-full sm:w-auto space-y-2">
         <div className={`${isAuthenticated ? "hidden" : " space-y-2"}`}>
-          {/* className={`${isAuthenticated ? "hidden" : " space-y-6"}`} */}
           <div className=" justify-center items-center gap-4  hidden">
             <Input
               type="text"
@@ -170,11 +169,8 @@ setNotification("Form submitted successfully!");
               placeholder="Paste Image URL"
             />
             <Image src={formData.photoURL} alt="Profile Image" width={50} height={50} />
-
-
           </div>
 
-          {/* First Name */}
           <div className="flex flex-col">
             <label htmlFor="firstName" className="font-semibold text-sm mb-1">
               First Name
@@ -192,7 +188,6 @@ setNotification("Form submitted successfully!");
             {formErrors.firstName && <small className="text-red-500">First Name is required</small>}
           </div>
 
-          {/* Last Name */}
           <div className="flex flex-col">
             <label htmlFor="lastName" className="font-semibold text-sm mb-1">
               Last Name
@@ -210,7 +205,6 @@ setNotification("Form submitted successfully!");
             {formErrors.lastName && <small className="text-red-500">Last Name is required</small>}
           </div>
 
-          {/* Email */}
           <div className="flex flex-col">
             <label htmlFor="email" className="font-semibold text-sm mb-1">
               Email
@@ -229,8 +223,7 @@ setNotification("Form submitted successfully!");
           </div>
         </div>
 
-        {/* Country */}
-        <div className="flex-col hidden">
+        <div className="flex-col">
           <label htmlFor="country" className="font-semibold text-sm mb-1">
             Country
           </label>
@@ -239,33 +232,28 @@ setNotification("Form submitted successfully!");
             id="country"
             name="country"
             value={formData.country}
-            onChange={handleInputChange}
             className="p-2 py-4 border-gray-300"
-            placeholder="Select a country"
-            disabled // Disable manual editing
+            placeholder="Country will auto-fill based on phone number"
+            disabled
           />
         </div>
 
-        {/* Phone */}
         <div className="flex flex-col">
           <label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Phone
           </label>
           <PhoneInput
-            country={formData.country || "us"}
+            country={formData.country || "cm"}  // Default to Cameroon if no country is set
             value={formData.phone}
             onChange={handlePhoneChange}
-            inputClass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white" : "text-black"
-              }`}
+            inputClass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white" : "text-black"}`}
             dropdownClass={`${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
-            enableSearch
           />
           {formErrors.phone && <small className="text-red-500">Phone is required</small>}
         </div>
 
-        {/* Message */}
         <div className="flex flex-col">
-          <label htmlFor="message" className="font-semibold text-sm mb-1 ">
+          <label htmlFor="message" className="font-semibold text-sm mb-1">
             Message
           </label>
           <textarea
@@ -273,29 +261,20 @@ setNotification("Form submitted successfully!");
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-
-            className={`p-2 py-4 border-b border-gray-300
-              bg-gradient-to-b from-zinc-200 backdrop-blur-2xl
-              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit
-              rounded-md lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.message ? "border-red-500" : "border-gray-300"}`}
+            className={`p-2 py-4 border-b border-gray-300`}
             placeholder="Type your message"
             required
           />
           {formErrors.message && <small className="text-red-500">Message is required</small>}
         </div>
-        {/* Other Fields */}
-        {/* Remaining fields like phone, message, etc. */}
 
-        {/* Submit Button */}
         <div className="flex justify-center">
           <Button type="submit" variant={"outline"} disabled={submitting} className="w-full mt-4">
             {submitting ? "Submitting..." : "Submit"}
           </Button>
         </div>
-
-        {/* Notification */}
-        {/* {notification && <p className="mt-4 text-green-500">{notification}</p>} */}
       </form>
+
       {notification && <p className="mt-4 text-green-500">{notification}</p>}
     </div>
   );
