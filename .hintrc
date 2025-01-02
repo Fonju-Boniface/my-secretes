@@ -10,6 +10,7 @@
         "label": "off",
         "select-name": "off"
       }
-    ]
+    ],
+    "axe/structure": "off"
   }
 }

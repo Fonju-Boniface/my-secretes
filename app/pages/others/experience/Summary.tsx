@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../firebase"; // Adjust the path to your Firebase setup
-import DownResume from "@/app/components/navbars/profile/DownResume";
+import DownResume from "@/app/components/navbars/profile/components/DownResume";
 import { Button } from "@/components/ui/button";
 
 interface SocialMedia {

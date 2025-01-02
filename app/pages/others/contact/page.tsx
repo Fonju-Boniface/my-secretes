@@ -1,76 +1,69 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { ref, push } from "firebase/database";
+import { getAuth, onAuthStateChanged } from "firebase/auth"; // Import Firebase Auth
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 import { Button } from "@/components/ui/button";
 import { database } from "@/firebase/firebase";
+import { useTheme } from "next-themes"; // Import useTheme from next-themes
+import { useToast } from "@/hooks/use-toast";
 
-interface Country {
-  name: {
-    common: string;
-  };
-  idd: {
-    root: string;
-    suffixes?: string[];
-  };
-  flags: {
-    svg: string;
-  };
-}
+import { Input } from "@/components/ui/input"; // Import ShadCN UI input components
+import Image from "next/image";
+type CountryData = {
+  name: string;
+  dialCode: string;
+  countryCode: string; // ISO 3166-1 alpha-2 code
+  format: string;
+};
 
 const ContactForm = () => {
-  const [countries, setCountries] = useState<{ name: string; code: string; flag: string }[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState<{ name: string; code: string } | null>(null);
-  const [countryCode, setCountryCode] = useState("");
+  const { toast } = useToast(); // Initialize the toast hook
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
+    country: "",
     message: "",
+    photoURL: "https://cdn.sanity.io/images/7utzqmtq/production/1663912a9831a8ee3e58747113b25bbd61598b95-1898x971.png",
   });
   const [formErrors, setFormErrors] = useState({
     firstName: false,
     lastName: false,
     email: false,
-    country: false,
     phone: false,
     message: false,
+    photoURL: false,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [notification, setNotification] = useState("");
 
+  const { theme } = useTheme();
+
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await axios.get<Country[]>("https://restcountries.com/v3.1/all");
-        const countryData = response.data
-          .map((country) => ({
-            name: country.name.common,
-            code: country.idd.root + (country.idd.suffixes ? country.idd.suffixes[0] : ""),
-            flag: country.flags.svg,
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
-        setCountries(countryData);
-      } catch (error) {
-        console.error("Error fetching countries:", error);
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        setFormData((data) => ({
+          ...data,
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ")[1] || "",
+          email: user.email || "",
+          photoURL: user.photoURL || "https://cdn.sanity.io/images/7utzqmtq/production/1663912a9831a8ee3e58747113b25bbd61598b95-1898x971.png",
+        }));
+      } else {
+        setIsAuthenticated(false);
       }
-    };
+    });
 
-    fetchCountries();
+    return () => unsubscribe();
   }, []);
-
-  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const country = countries.find((c) => c.name === e.target.value);
-    setSelectedCountry(country || null);
-    setCountryCode(country ? country.code : "");
-    setFormData((data) => ({
-      ...data,
-      phone: country ? `${country.code} ${data.phone.replace(country.code, "").trim()}` : data.phone,
-    }));
-    setFormErrors((errors) => ({ ...errors, country: !country }));
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -78,185 +71,201 @@ const ContactForm = () => {
     setFormErrors((errors) => ({ ...errors, [name]: !value }));
   };
 
+  const handlePhoneChange = (value: string, countryData: CountryData) => {
+    setFormData((data) => ({
+      ...data,
+      phone: value,
+      country: countryData.name, // Use the full country name
+    }));
+    setFormErrors((errors) => ({ ...errors, phone: !value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate form data
     const errors = {
       firstName: !formData.firstName,
       lastName: !formData.lastName,
       email: !formData.email || !isValidEmail(formData.email),
-      country: !selectedCountry,
       phone: !formData.phone,
       message: !formData.message,
+      photoURL: !formData.photoURL,
     };
 
     setFormErrors(errors);
 
     if (Object.values(errors).some((error) => error)) {
+      setNotification("Please fill out all required fields correctly.");
+      toast({
+        title: "Validation Error",
+        description: "Please fill out all required fields correctly.",
+        variant: "destructive",
+      });
       return;
     }
 
     setSubmitting(true);
 
-    // Remove spaces from phone number
-    const sanitizedPhone = formData.phone.replace(/\s+/g, '');
-
     const data = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      country: selectedCountry ? selectedCountry.name : "",
-      phone: sanitizedPhone, // Use sanitized phone number
-      message: formData.message,
-      timestamp: new Date().toISOString(), // Add the current timestamp
+      ...formData,
+      timestamp: new Date().toISOString(),
     };
 
     try {
       const contactRef = ref(database, "contacts");
       await push(contactRef, data);
-      setNotification("Form submitted successfully!");
+
+      toast({
+        title: "Contact successfully sent",
+        description: "Form submitted successfully!",
+        variant: "default",
+      });
+setNotification("Form submitted successfully!");
       setFormData({
         firstName: "",
         lastName: "",
         email: "",
         phone: "",
+        country: "",
         message: "",
+        photoURL: "https://cdn.sanity.io/images/7utzqmtq/production/1663912a9831a8ee3e58747113b25bbd61598b95-1898x971.png",
       });
-      setSelectedCountry(null);
-      setCountryCode("");
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      console.error("Error submitting form:", errorMessage);
       setNotification("Failed to submit form. Please try again later.");
-      console.error("Error submitting form:", error);
+
+      toast({
+        title: "Submission Error",
+        description: "Failed to submit form. Please try again later.",
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData({
+      ...formData,
+      photoURL: value || "https://cdn.sanity.io/images/7utzqmtq/production/1663912a9831a8ee3e58747113b25bbd61598b95-1898x971.png",
+    });
+  };
+
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+
   return (
-    <div className="max-w-2xl mx-auto p-1 sm:p-4 md:p-8">
+    <div className="w-full flex flex-col justify-center min-h-[calc(100vh-4rem)]  items-center p-1">
       <h2 className="text-3xl font-bold mb-6">Contact Me</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* First Name */}
-        <div className="flex flex-col">
-          <label htmlFor="firstName" className="font-semibold mb-1">
-            First Name
-          </label>
-          <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            className={`p-2 border rounded-md border-gray-300
-              bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
-              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-              lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.firstName ? "border-red-500" : ""}`}
-            placeholder="Enter your first name"
-            required
-          />
-          {formErrors.firstName && <small className="text-red-500">First Name is required</small>}
-        </div>
+      <form onSubmit={handleSubmit} className="w-full sm:w-auto space-y-2">
+        <div className={`${isAuthenticated ? "hidden" : " space-y-2"}`}>
+          {/* className={`${isAuthenticated ? "hidden" : " space-y-6"}`} */}
+          <div className=" justify-center items-center gap-4  hidden">
+            <Input
+              type="text"
+              value={formData.photoURL}
+              onChange={handleImageUrlChange}
+              placeholder="Paste Image URL"
+            />
+            <Image src={formData.photoURL} alt="Profile Image" width={50} height={50} />
 
-        {/* Last Name */}
-        <div className="flex flex-col">
-          <label htmlFor="lastName" className="font-semibold mb-1">
-            Last Name
-          </label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            className={`p-2 border rounded-md border-gray-300
-              bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
-              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-              lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.lastName ? "border-red-500" : ""}`}
-            placeholder="Enter your last name"
-            required
-          />
-          {formErrors.lastName && <small className="text-red-500">Last Name is required</small>}
-        </div>
 
-        {/* Email */}
-        <div className="flex flex-col">
-          <label htmlFor="email" className="font-semibold mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className={`p-2 border rounded-md border-gray-300
-              bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
-              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-              lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.email ? "border-red-500" : ""}`}
-            placeholder="Enter your email"
-            required
-          />
-          {formErrors.email && <small className="text-red-500">Please enter a valid email address</small>}
+          </div>
+
+          {/* First Name */}
+          <div className="flex flex-col">
+            <label htmlFor="firstName" className="font-semibold text-sm mb-1">
+              First Name
+            </label>
+            <Input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className={`p-2 py-4 ${formErrors.firstName ? "border-red-500" : "border-gray-300"}`}
+              placeholder="Enter your first name"
+              disabled={isAuthenticated}
+            />
+            {formErrors.firstName && <small className="text-red-500">First Name is required</small>}
+          </div>
+
+          {/* Last Name */}
+          <div className="flex flex-col">
+            <label htmlFor="lastName" className="font-semibold text-sm mb-1">
+              Last Name
+            </label>
+            <Input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className={`p-2 py-4 ${formErrors.lastName ? "border-red-500" : "border-gray-300"}`}
+              placeholder="Enter your last name"
+              disabled={isAuthenticated}
+            />
+            {formErrors.lastName && <small className="text-red-500">Last Name is required</small>}
+          </div>
+
+          {/* Email */}
+          <div className="flex flex-col">
+            <label htmlFor="email" className="font-semibold text-sm mb-1">
+              Email
+            </label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className={`p-2 py-4 ${formErrors.email ? "border-red-500" : "border-gray-300"}`}
+              placeholder="Enter your email"
+              disabled={isAuthenticated}
+            />
+            {formErrors.email && <small className="text-red-500">Please enter a valid email address</small>}
+          </div>
         </div>
 
         {/* Country */}
-        <div className="flex flex-col">
-          <label htmlFor="country" className="font-semibold mb-1">
+        <div className="flex-col hidden">
+          <label htmlFor="country" className="font-semibold text-sm mb-1">
             Country
           </label>
-          <select
+          <Input
+            type="text"
             id="country"
             name="country"
-            value={selectedCountry ? selectedCountry.name : ""}
-            onChange={handleCountryChange}
-            className={`p-2 border rounded-md border-gray-300
-              bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
-              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-              lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.country ? "border-red-500" : ""}`}
-            required
-          >
-            <option value="">Select your country</option>
-            {countries.map((country) => (
-              <option key={country.code} value={country.name}>
-                {country.name}
-              </option>
-            ))}
-          </select>
-          {formErrors.country && <small className="text-red-500">Country is required</small>}
+            value={formData.country}
+            onChange={handleInputChange}
+            className="p-2 py-4 border-gray-300"
+            placeholder="Select a country"
+            disabled // Disable manual editing
+          />
         </div>
 
         {/* Phone */}
-        <div className="flex flex-col w-full">
-          <label htmlFor="phone" className="font-semibold mb-1">
+        <div className="flex flex-col">
+          <label htmlFor="phone" className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Phone
           </label>
-          <div className="relative w-full">
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className={`border rounded-md pl-16 border-gray-300 flex justify-center pb-6 pt-8
-                bg-gradient-to-b from-zinc-200 backdrop-blur-2xl
-                dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:bg-gray-200 lg:dark:bg-zinc-800/30 
-                lg:w-auto lg:rounded-xl lg:border lg:p-4 ${formErrors.phone ? "border-red-500" : ""}`}
-              placeholder="Enter your phone number"
-              required
-            />
-            <span className="absolute left-0 pl-5 top-1/2 transform -translate-y-1/2 bg-primary h-full flex justify-center items-center">
-              {countryCode}
-            </span>
-          </div>
+          <PhoneInput
+            country={formData.country || "us"}
+            value={formData.phone}
+            onChange={handlePhoneChange}
+            inputClass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white" : "text-black"
+              }`}
+            dropdownClass={`${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
+            enableSearch
+          />
           {formErrors.phone && <small className="text-red-500">Phone is required</small>}
         </div>
 
         {/* Message */}
         <div className="flex flex-col">
-          <label htmlFor="message" className="font-semibold mb-1">
+          <label htmlFor="message" className="font-semibold text-sm mb-1 ">
             Message
           </label>
           <textarea
@@ -264,26 +273,30 @@ const ContactForm = () => {
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-            className={`p-2 border rounded-md border-gray-300
-              bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl
-              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static
-              lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.message ? "border-red-500" : ""}`}
+
+            className={`p-2 py-4 border-b border-gray-300
+              bg-gradient-to-b from-zinc-200 backdrop-blur-2xl
+              dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit
+              rounded-md lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30 ${formErrors.message ? "border-red-500" : "border-gray-300"}`}
             placeholder="Type your message"
             required
           />
           {formErrors.message && <small className="text-red-500">Message is required</small>}
         </div>
+        {/* Other Fields */}
+        {/* Remaining fields like phone, message, etc. */}
 
         {/* Submit Button */}
         <div className="flex justify-center">
-          <Button type="submit" disabled={submitting} className="w-full mt-4">
+          <Button type="submit" variant={"outline"} disabled={submitting} className="w-full mt-4">
             {submitting ? "Submitting..." : "Submit"}
           </Button>
         </div>
 
         {/* Notification */}
-        {notification && <p className="mt-4 text-green-500">{notification}</p>}
+        {/* {notification && <p className="mt-4 text-green-500">{notification}</p>} */}
       </form>
+      {notification && <p className="mt-4 text-green-500">{notification}</p>}
     </div>
   );
 };

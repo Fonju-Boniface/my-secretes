@@ -2,9 +2,9 @@
 import React from "react";
 import { ThemeModeToggle } from "@/components/theme-mode-toggle";
 import { ThemeColorToggle } from "@/components/theme-color-toggle";
-import { FullscreenModeToggle } from "@/app/components/navbars/profile/FullscreenModeToggle";
-import Me from "./me";
-import DownResume from "./DownResume";
+import { FullscreenModeToggle } from "@/app/components/navbars/profile/components/FullscreenModeToggle";
+import Me from "./components/me";
+import DownResume from "./components/DownResume";
 
 
 const Profile = () => {

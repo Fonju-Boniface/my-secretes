@@ -25,6 +25,9 @@ const AboutHobby = () => {
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);  // For deleting all
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
     const dataRef = ref(database, "your-Hobbies");
@@ -57,7 +60,7 @@ const AboutHobby = () => {
         setEditId(null);
         setIsDialogOpen(false);
       } catch (error) {
-        setNotification("Failed to update data."+error);
+        setNotification("Failed to update data." + error);
       } finally {
         setSubmitting(false);
       }
@@ -76,13 +79,13 @@ const AboutHobby = () => {
       setEditData({ name: "", iconName: "", text: "" });
       setIsDialogOpen(false);
     } catch (error) {
-      setNotification("Failed to add data."+error);
+      setNotification("Failed to add data." + error);
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Delete functionality
+  // Delete functionality for individual items
   const handleDelete = async (id: string) => {
     setSubmitting(true);
     setNotification(null);
@@ -91,8 +94,26 @@ const AboutHobby = () => {
       const itemRef = ref(database, `your-Hobbies/${id}`);
       await remove(itemRef);
       setNotification("Data deleted successfully!");
+      setIsDeleteDialogOpen(false); // Close the delete dialog
     } catch (error) {
-      setNotification("Failed to delete data."+error);
+      setNotification("Failed to delete data." + error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Delete All functionality
+  const handleDeleteAll = async () => {
+    setSubmitting(true);
+    setNotification(null);
+
+    try {
+      const dataRef = ref(database, "your-Hobbies");
+      await remove(dataRef);
+      setNotification("All data deleted successfully!");
+      setIsDeleteAllDialogOpen(false);  // Close the delete all dialog
+    } catch (error) {
+      setNotification("Failed to delete all data." + error);
     } finally {
       setSubmitting(false);
     }
@@ -104,15 +125,12 @@ const AboutHobby = () => {
 
       {/* Add Button */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger>
+        <DialogTrigger asChild>
           <Button variant="outline">Add New Item</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogTitle>{editId ? "Edit Item" : "Add New Item"}</DialogTitle>
-          <form
-            onSubmit={editId ? handleUpdate : handleAdd}
-            className="space-y-4 "
-          >
+          <form onSubmit={editId ? handleUpdate : handleAdd} className="space-y-4 ">
             <input
               name="name"
               value={editData.name}
@@ -134,26 +152,71 @@ const AboutHobby = () => {
               placeholder="Text"
               className="w-full p-2 border border-gray-300 rounded"
             />
+
+            <div className="flex gap-2 justify-cente items-center">
+              <Button
+                variant="outline"
+                type="submit"
+                className={`bg-primary w-full text-white flex items-center space-x-2 ${submitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={submitting}
+              >
+                {submitting ? (editId ? "Updating..." : "Adding...") : (editId ? "Update" : "Add")}
+              </Button>
+              <DialogClose>
+                {/* Replaced nested button with a div styled as a button */}
+                <div
+                  className="text-center justify-center border-b border-gray-300
+                        bg-gradient-to-b from-zinc-200 p-2 backdrop-blur-2xl
+                        dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit
+                        rounded-xl lg:border lg:bg-gray-200  lg:dark:bg-zinc-800/30"
+                  onClick={() => setIsDialogOpen(false)}
+                >
+                  Close
+                </div>
+              </DialogClose>
+            </div>
+
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog for Individual Item */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogTitle>Are you sure you want to delete this item?</DialogTitle>
+          <div className="flex justify-between mt-4">
             <Button
               variant="outline"
-              type="submit"
-              className={`bg-primary w-full text-white flex items-center space-x-2 ${
-                submitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              onClick={() => handleDelete(deleteId!)}
+              className="text-red-600"
               disabled={submitting}
             >
-              {submitting
-                ? editId
-                  ? "Updating..."
-                  : "Adding..."
-                : editId
-                  ? "Update"
-                  : "Add"}
+              {submitting ? "Deleting..." : "Delete"}
             </Button>
             <DialogClose>
-              <Button variant="outline">Close</Button>
+              <Button variant="outline">Cancel</Button>
             </DialogClose>
-          </form>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete All Confirmation Dialog */}
+      <Dialog open={isDeleteAllDialogOpen} onOpenChange={setIsDeleteAllDialogOpen}>
+        <DialogContent>
+          <DialogTitle>Are you sure you want to delete all items?</DialogTitle>
+          <div className="flex justify-between mt-4">
+            <Button
+              variant="outline"
+              onClick={handleDeleteAll}
+              className="text-red-600"
+              disabled={submitting}
+            >
+              {submitting ? "Deleting All..." : "Delete All Items"}
+            </Button>
+            <DialogClose>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -161,7 +224,6 @@ const AboutHobby = () => {
         {Object.entries(data).map(([id, item]) => (
           <div key={id} className="p-4 border border-gray-300 rounded">
             <h2 className="text-lg font-semibold">{item.name}</h2>
-            
             <i className={`${item.iconName} text-primary`}></i>
             <p>
               <strong>Text:</strong> {item.text}
@@ -172,7 +234,10 @@ const AboutHobby = () => {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => handleDelete(id)}
+                onClick={() => {
+                  setDeleteId(id); // Set the item ID to delete
+                  setIsDeleteDialogOpen(true); // Open the delete confirmation dialog
+                }}
                 className="text-red-600"
                 disabled={submitting}
               >
@@ -189,18 +254,30 @@ const AboutHobby = () => {
           className={`p-4 rounded-md border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8
           backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit
           lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4
-          lg:dark:bg-zinc-800/30 ${
-            notification.includes("success")
+          lg:dark:bg-zinc-800/30 ${notification.includes("success")
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
-          }`}
+            }`}
         >
           {notification}
         </div>
       )}
-      
+
+      {/* Delete All Button */}
+      <div className="mt-4">
+        <Button
+          variant="outline"
+          className="bg-primary w-full"
+          onClick={() => setIsDeleteAllDialogOpen(true)} // Open the delete all dialog
+          disabled={submitting}
+        >
+          {submitting ? "Deleting All..." : "Delete All Items"}
+        </Button>
+      </div>
     </div>
   );
 };
+
+// k
 
 export default AboutHobby;

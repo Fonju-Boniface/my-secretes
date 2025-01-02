@@ -19,6 +19,7 @@ const availableThemeColors = [
   { name: "Blue", light: "bg-blue-600", dark: "bg-blue-700" },
   { name: "Green", light: "bg-green-600", dark: "bg-green-500" },
   { name: "Orange", light: "bg-orange-500", dark: "bg-orange-700" },
+  { name: "Purple", light: "bg-purple-500", dark: "bg-purple-700" },
 ];
 
 export function ThemeColorToggle() {

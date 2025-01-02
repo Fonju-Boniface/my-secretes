@@ -68,8 +68,8 @@ const AboutText = () => {
                         >
                             {submitting ? "Saving..." : "Save"}
                         </Button>
-                        <DialogClose>
-                            <Button variant="outline">Close</Button>
+                        <DialogClose asChild>
+                            <Button variant="outline" type="button">Close</Button>
                         </DialogClose>
                     </form>
                 </DialogContent>

@@ -1,27 +1,65 @@
-"use client";
 
-import React, { useState } from "react";
-import Image from "next/image"; // Import the Next.js Image component
-import { Input } from "@/components/ui/input"; // Shadcn Input component
-import { Copy } from "lucide-react"; // Import Copy icon from lucide-react
-import { toast } from "react-toastify"; // Import toast from react-toastify
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Copy } from "lucide-react";
+import { ref, onValue } from "firebase/database";
+import { database } from "@/firebase/firebase";
+import { useToast } from "@/hooks/use-toast";
+
+interface ProfileData {
+  imageUrl: string;
+  name: string;
+  profession: string;
+  email: string;
+  phoneNumber: string;
+  location: string;
+  address: string;
+}
 
 const Me = () => {
-  // Dummy profile data
-  const [profileData] = useState({
-    imageUrl: "/1.jpg", // Local image path
-    name: "John Doe",
-    profession: "Software Engineer",
-    email: "johndoe@example.com",
-    phoneNumber: "+1234567890",
-    location: "New York, USA",
-    address: "123 Main Street, Apt 4B",
-  });
+  const { toast } = useToast(); // Use ShadCN toast
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+
+  // Fetch data from Firebase
+  useEffect(() => {
+    const dataRef = ref(database, "myProfile");
+
+    const unsubscribe = onValue(
+      dataRef,
+      (snapshot) => {
+        if (snapshot.exists()) {
+          setProfileData(snapshot.val());
+        } else {
+          setProfileData(null);
+        }
+      },
+      (error) => {
+        console.error("Error fetching data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch profile data.",
+          variant: "destructive",
+        });
+      }
+    );
+
+    // Cleanup listener on unmount
+    return () => unsubscribe();
+  }, [toast]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(`${text} copied to clipboard`); // Use toast for notifications
+    toast({
+      title: "Copied to Clipboard",
+      description: `${text} has been copied.`,
+    });
   };
+
+  if (!profileData) {
+    return <div className="mt-8 text-gray-500">Loading no profile data.</div>;
+  }
+
 
   return (
     <div className="shadow-lg rounded-lg p-2">

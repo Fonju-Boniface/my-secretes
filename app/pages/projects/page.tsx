@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { database } from "@/firebase/firebase";
 import { ThumbsUp, ThumbsDown, MessageCircle, Send, Mail } from "lucide-react";
-import CreateProjects from "./creeateProject";
+import CreateProjects from "../auth/admin/dashboard/projects/createProject";
 import {
   Dialog,
   DialogContent,
