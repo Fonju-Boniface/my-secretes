@@ -5,7 +5,7 @@ import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/firebase/firebase";
 import Image from "next/image";
-import HomeForm from "./HomeForm";
+// import HomeForm from "./HomeForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { UserIcon } from "lucide-react";
@@ -149,7 +149,7 @@ export default function Home() {
         </div>
 
       </div>
-      <HomeForm />
+      {/* <HomeForm /> */}
     </>
   );
 }

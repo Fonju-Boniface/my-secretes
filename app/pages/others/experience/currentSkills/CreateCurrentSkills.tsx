@@ -14,12 +14,14 @@ import { database } from "@/firebase/firebase";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 
-const CreateSkills = () => {
+const CreateCurrentSkills = () => {
   const [data, setData] = useState<{
     [key: string]: {
-      title: string; SkDescription: string; SkCategory: string; SkType: string;
-      SkPercentage: string;
-      SkYears: string; imageUrl: string;
+      title: string; 
+      SkDescription: string; 
+      SkCategory: string; 
+      SkType: string; 
+      imageUrl: string;
     };
   }>({});
   const [editId, setEditId] = useState<string | null>(null);
@@ -28,8 +30,6 @@ const CreateSkills = () => {
     SkDescription: "",
     SkCategory: "",
     SkType: "",
-    SkPercentage: "",
-    SkYears: "",
     imageUrl: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -40,7 +40,7 @@ const CreateSkills = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => {
-    const dataRef = ref(database, "MySkills");
+    const dataRef = ref(database, "MyCurrentSkills");
     onValue(dataRef, (snapshot) => {
       const snapshotData = snapshot.val();
       setData(snapshotData || {});
@@ -64,7 +64,7 @@ const CreateSkills = () => {
       setNotification(null);
 
       try {
-        const itemRef = ref(database, `MySkills/${editId}`);
+        const itemRef = ref(database, `MyCurrentSkills/${editId}`);
         await set(itemRef, editData);
         setNotification("Skill updated successfully!");
         setEditId(null);
@@ -83,14 +83,12 @@ const CreateSkills = () => {
     setNotification(null);
 
     try {
-      const newRef = ref(database, "MySkills");
+      const newRef = ref(database, "MyCurrentSkills");
       await push(newRef, editData);
       setNotification("Skill added successfully!");
       setEditData({
         title: "", SkDescription: "",
-        SkCategory: "", SkType: "",
-        SkPercentage: "",
-        SkYears: "", imageUrl: "",
+        SkCategory: "", SkType: "", imageUrl: "",
       });
       setIsDialogOpen(false);
     } catch (error) {
@@ -106,7 +104,7 @@ const CreateSkills = () => {
     setNotification(null);
 
     try {
-      const itemRef = ref(database, `MySkills/${id}`);
+      const itemRef = ref(database, `MyCurrentSkills/${id}`);
       await remove(itemRef);
       setNotification("Skill deleted successfully!");
       setIsDeleteDialogOpen(false); // Close the delete dialog
@@ -123,7 +121,7 @@ const CreateSkills = () => {
     setNotification(null);
 
     try {
-      const dataRef = ref(database, "MySkills");
+      const dataRef = ref(database, "MyCurrentSkills");
       await remove(dataRef);
       setNotification("All skills deleted successfully!");
       setIsDeleteAllDialogOpen(false);  // Close the delete all dialog
@@ -193,20 +191,7 @@ const CreateSkills = () => {
               placeholder="Skill Type"
               className="w-full p-2 border border-gray-300 rounded"
             />
-            <input
-              name="SkPercentage"
-              value={editData.SkPercentage}
-              onChange={handleEditChange}
-              placeholder="Skill Percentage"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-            <input
-              name="SkYears"
-              value={editData.SkYears}
-              onChange={handleEditChange}
-              placeholder="Skill Years"
-              className="w-full p-2 border border-gray-300 rounded"
-            />
+            
 
             <div className="flex gap-2 justify-cente items-center">
               <Button
@@ -295,12 +280,7 @@ const CreateSkills = () => {
             <p>
               <strong>Skill Type:</strong> {item.SkType}
             </p>
-            <p>
-              <strong>Skill Percentage:</strong> {item.SkPercentage}
-            </p>
-            <p>
-              <strong>Skill Years:</strong> {item.SkYears}
-            </p>
+            
             <div className="flex w-full gap-3 mt-2">
               <Button variant="outline" onClick={() => handleEdit(id)} className=" w-full">
                 Edit
@@ -351,4 +331,4 @@ const CreateSkills = () => {
   );
 };
 
-export default CreateSkills;
+export default CreateCurrentSkills;

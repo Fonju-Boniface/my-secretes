@@ -1,7 +1,7 @@
 import { type SchemaTypeDefinition } from 'sanity'
 import { home } from './home'
-import { fileAsset } from './fileAsset'
+import { pdfFile } from './pdfFile'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [ home, fileAsset],
+  types: [ home, pdfFile],
 }

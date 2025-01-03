@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input"; 
 import Image from "next/image";
 
+
 const ContactForm = () => {
   const { toast } = useToast(); 
   const [formData, setFormData] = useState({
@@ -246,7 +247,7 @@ const ContactForm = () => {
             country={formData.country || "cm"}  // Default to Cameroon if no country is set
             value={formData.phone}
             onChange={handlePhoneChange}
-            inputClass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white" : "text-black"}`}
+            inputclass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white" : "text-black"}`}
             dropdownClass={`${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
           />
           {formErrors.phone && <small className="text-red-500">Phone is required</small>}

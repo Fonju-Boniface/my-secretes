@@ -28,6 +28,7 @@ export default function RootLayout({
 }>) {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleS, setIsVisibleS] = useState(false);
+  // const [isVisibleBg, setIsVisibleBg] = useState(false);
 
   // const [user, setUser] = useState<User | null>(null);
 
@@ -35,10 +36,14 @@ export default function RootLayout({
     setIsVisible(!isVisible);
     setIsVisibleS(false);
   };
-
+  
   const toggleVisibilities = () => {
     setIsVisible(false);
     setIsVisibleS(!isVisibleS);
+  };
+  const toggleVisible = () => {
+    setIsVisibleS(false);
+    setIsVisible(false);
   };
   return (
     <html lang="en" suppressHydrationWarning>
@@ -72,10 +77,20 @@ export default function RootLayout({
               className="w-[100%] sm:w-[calc(100%-15rem)] relative px-2 py-2 pb-0 mt-[4rem] flex flex-col
                   justify-center items-center"
             >
+                <div className={`fixed top-0 h-[100vh] z-20 w-[100%]  dark:bg-zinc-900
+                      bg-zinc-100 transition-all ${isVisible || isVisibleS
+                      ? " bg-red-500 left-0"
+                      : "bg-green-600 left-[-100%] "
+                    } flex flex-col
+                  justify-center items-center`} onClick={toggleVisible}>
+                    back
+                </div>
               <div className="flex justify-start items-start w-[100%] flex-col">
+
+
                 <div
                   className={`shadow-xl flex justify-center items-end fixed top-0 z-30 dark:bg-zinc-900
-                      bg-zinc-100 left-0 sm:left-0 ${isVisible
+                      bg-zinc-100 left-0 sm:left-0 transition-all ${isVisible
                       ? " bg-red-500 left-0"
                       : "bg-green-600 left-[-100%]"
                     } sm:h-[100vh] h-[calc(100vh-3rem)]`}
@@ -96,6 +111,7 @@ export default function RootLayout({
                   <Profile />
                 </div>
                 {/* topnav */}
+
                 <TopNav />
               </div>
               <div
@@ -125,7 +141,7 @@ export default function RootLayout({
                     )}
                   </Button>
                 </div>
-                <div className="flex justify-center items-end h-[3rem] w-[3rem]">
+                <div onClick={toggleVisible} className="flex justify-center items-end h-[3rem] w-[3rem]">
                   <Progress />
                 </div>
                 <div className="flex justify-center items-end h-[3rem] w-[3rem]">
@@ -147,6 +163,7 @@ export default function RootLayout({
               <Dialog /> {/* Include the Dialog here */}
               <div className="w-full relative">
                 <main className="min-h-[100vh] overflow-y-auto w-full mb-10">
+                  
                   <ScrollProgress />
 
                   {children}

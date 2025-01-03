@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '@/firebase/firebase';
-// import AboutText from './page'; // Ensure the path is correct for your project
+import AboutText from './page'; // Ensure the path is correct for your project
 
 const AboutTextField = () => {
     const [text, setText] = useState<string | null>(null);
@@ -24,14 +24,16 @@ const AboutTextField = () => {
     }, []);
 
     return (
-        <div className="mt-4 max-w-4xl mx-auto text-center">
+        <div className="mt-4 text-start">
             {loading ? (
                 <p className="text-center text-gray-500">Loading...</p>
             ) : (
-                <div className="text-2xl font-bold sm:text-base md:text-lg lg:text-xl">{text}</div>
+                <div className="text-2xl sm:text-base md:text-lg lg:text-xl text-start">{text}</div>
             )}
             <br />
-            {/* <AboutText /> */}
+            <AboutText />
+
+            
         </div>
     );
 };
