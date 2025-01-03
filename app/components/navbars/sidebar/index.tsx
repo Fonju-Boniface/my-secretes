@@ -10,7 +10,6 @@ import {
   User,
   Phone,
   Contact,
-  GraduationCap,
 
 } from "lucide-react"; // Import X (close) and Menu (bars) icons
 import Link from "next/link";
@@ -45,13 +44,6 @@ const links = [
     description: "Get in touch",
     icon: <Contact />,
   },
-  // {
-  //   href: "/pages/others/education",
-  //   label: "Education",
-  //   description: "Get in touch",
-  //   icon: <GraduationCap />,
-  // },
- 
 ];
 
 const SideBar = () => {
