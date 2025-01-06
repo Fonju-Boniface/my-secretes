@@ -182,7 +182,7 @@ const ContactForm = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleInputChange}
-              className={`p-2 py-4 ${formErrors.firstName ? "border-red-500" : "border-gray-300"}`}
+              className={`p-2 py-4 ${formErrors.firstName ? "border-red-500" : "border-gray-300"} hover:border-primary`}
               placeholder="Enter your first name"
               disabled={isAuthenticated}
             />
@@ -199,7 +199,7 @@ const ContactForm = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
-              className={`p-2 py-4 ${formErrors.lastName ? "border-red-500" : "border-gray-300"}`}
+              className={`p-2 py-4 ${formErrors.lastName ? "border-red-500" : "border-gray-300"} hover:border-primary`}
               placeholder="Enter your last name"
               disabled={isAuthenticated}
             />
@@ -216,7 +216,7 @@ const ContactForm = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={`p-2 py-4 ${formErrors.email ? "border-red-500" : "border-gray-300"}`}
+              className={`p-2 py-4 ${formErrors.email ? "border-red-500" : "border-gray-300"} hover:border-primary`}
               placeholder="Enter your email"
               disabled={isAuthenticated}
             />
@@ -224,7 +224,7 @@ const ContactForm = () => {
           </div>
         </div>
 
-        <div className="flex-col">
+        <div className="flex-col hidden">
           <label htmlFor="country" className="font-semibold text-sm mb-1">
             Country
           </label>
@@ -233,7 +233,7 @@ const ContactForm = () => {
             id="country"
             name="country"
             value={formData.country}
-            className="p-2 py-4 border-gray-300"
+            className="p-2 py-4 border-gray-300 hover:border-primary"
             placeholder="Country will auto-fill based on phone number"
             disabled
           />
@@ -247,8 +247,8 @@ const ContactForm = () => {
             country={formData.country || "cm"}  // Default to Cameroon if no country is set
             value={formData.phone}
             onChange={handlePhoneChange}
-            inputclass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white" : "text-black"}`}
-            dropdownClass={`${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}
+            inputclass={`!w-full !bg-transparent !border-gray-300 ${theme === "dark" ? "text-white  hover:border-primary p-2 py-4" : "text-black  hover:border-primary p-2 py-4"}`}
+            dropdownClass={`${theme === "dark" ? "text-gray-500  hover:border-primary p-2 py-4" : "text-gray-500  hover:border-primary p-2 py-4"}`}
           />
           {formErrors.phone && <small className="text-red-500">Phone is required</small>}
         </div>
@@ -262,7 +262,7 @@ const ContactForm = () => {
             name="message"
             value={formData.message}
             onChange={handleInputChange}
-            className={`p-2 py-4 border-b border-gray-300`}
+            className={`p-2 py-4 border-b border-gray-300 hover:border-primary`}
             placeholder="Type your message"
             required
           />
@@ -270,7 +270,7 @@ const ContactForm = () => {
         </div>
 
         <div className="flex justify-center">
-          <Button type="submit" variant={"outline"} disabled={submitting} className="w-full mt-4">
+          <Button type="submit" variant={"outline"} disabled={submitting} className="w-full mt-4 hover:border-primary">
             {submitting ? "Submitting..." : "Submit"}
           </Button>
         </div>

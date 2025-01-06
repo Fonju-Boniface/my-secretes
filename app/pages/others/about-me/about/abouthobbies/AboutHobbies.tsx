@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '@/firebase/firebase';
-import AboutHobby from './page';
+// import AboutHobby from './page';
 
 const AboutHobbies = () => {
     const [hobbies, setHobbies] = useState<{ [key: string]: { name: string; iconName: string; text: string } }>({});
@@ -43,7 +43,7 @@ const AboutHobbies = () => {
             )}
 
            <br />
-           <AboutHobby />
+           {/* <AboutHobby /> */}
         </>
     );
 };

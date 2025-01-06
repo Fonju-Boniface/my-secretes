@@ -10,6 +10,7 @@ import {
   User,
   Phone,
   Contact,
+  Star,
 
 } from "lucide-react"; // Import X (close) and Menu (bars) icons
 import Link from "next/link";
@@ -43,6 +44,12 @@ const links = [
     label: "Experience",
     description: "Get in touch",
     icon: <Contact />,
+  },
+  {
+    href: "/pages/others/rating",
+    label: "Rating",
+    description: "Rate and Review my portfolio",
+    icon: <Star />,
   },
 ];
 

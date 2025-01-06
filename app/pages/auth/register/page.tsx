@@ -5,8 +5,7 @@ import { auth } from "@/firebase/firebase";
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getDatabase, ref, set } from "firebase/database";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getDatabase, ref, set } from "firebase/database"; // Import Firebase Realtime Database methods
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react"; // Import the loading icon
@@ -16,8 +15,7 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState<string | null>(null); // Track which button is loading
 
   const router = useRouter();
-  const db = getDatabase();
-  const firestore = getFirestore();
+  const db = getDatabase(); // Initialize Realtime Database instance
 
   // Check if the user is already logged in when the component mounts
   useEffect(() => {
@@ -37,12 +35,9 @@ const RegisterPage = () => {
       uid: user.uid,
       email: user.email,
       imageUrl: user.photoURL || "",
-      role: "user",
+      role: "user", // Default role
       signInMethod: method,
     };
-
-    // Save to Firestore
-    await setDoc(doc(firestore, "users", user.uid), userData);
 
     // Save to Realtime Database
     await set(ref(db, `users/${user.uid}`), userData);
@@ -54,7 +49,7 @@ const RegisterPage = () => {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Save user data
+      // Save user data to Realtime Database
       await saveUserData(user, method);
 
       // Redirect based on role

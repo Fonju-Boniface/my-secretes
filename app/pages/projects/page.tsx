@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { database } from "@/firebase/firebase";
 import { ThumbsUp, ThumbsDown, MessageCircle, Send, Mail } from "lucide-react";
-import CreateProjects from "../auth/admin/dashboard/projects/createProject";
+// import CreateProjects from "../auth/admin/dashboard/projects/createProject";
 import {
   Dialog,
   DialogContent,
@@ -48,12 +48,17 @@ const Projects = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [commentText, setCommentText] = useState<string>("");
   const [openDialog, setOpenDialog] = useState<string | null>(null);
+  <br />
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
     });
+
+    // setInterval(() => {
+      
+    // }, interval);
 
     const projectsRef = ref(database, "MyProjects");
     const unsubscribeDatabase = onValue(
@@ -375,7 +380,7 @@ const Projects = () => {
         )}
       </div>
       <br />
-      <CreateProjects />
+      {/* <CreateProjects /> */}
     </>
   );
 };

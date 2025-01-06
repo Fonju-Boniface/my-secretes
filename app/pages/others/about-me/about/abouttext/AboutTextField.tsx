@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { database } from '@/firebase/firebase';
-import AboutText from './page'; // Ensure the path is correct for your project
+// import AboutText from './page'; // Ensure the path is correct for your project
 
 const AboutTextField = () => {
     const [text, setText] = useState<string | null>(null);
@@ -31,7 +31,7 @@ const AboutTextField = () => {
                 <div className="text-2xl sm:text-base md:text-lg lg:text-xl text-start">{text}</div>
             )}
             <br />
-            <AboutText />
+            {/* <AboutText /> */}
 
             
         </div>

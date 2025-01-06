@@ -5,7 +5,6 @@ import { ThemeProvider as NextThemesProvider, } from "next-themes";
 
 import ThemeDataProvider from "@/context/theme-data-provider";
 import { metadata } from "./layoutMetadata";
-import { useState } from "react";
 import SideBar from "./components/navbars/sidebar";
 import Profile from "./components/navbars/profile/page";
 import TopNav from "./components/navbars/topnav";
@@ -14,9 +13,18 @@ import { Menu, UserPlus, X } from "lucide-react";
 import Footer from "./components/Footer";
 import ScrollProgress from "./components/progress/ScrollProgress";
 import Progress from "./components/progress/ScrollProgressBar/Progress";
-import { Dialog } from "@/components/ui/dialog";
 import Script from "next/script";
 import { Toaster } from "@/components/ui/toaster"
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+
+import { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import Link from "next/link";
 const inter = Inter({ subsets: ["latin"] });
 
 
@@ -28,9 +36,9 @@ export default function RootLayout({
 }>) {
   const [isVisible, setIsVisible] = useState(false);
   const [isVisibleS, setIsVisibleS] = useState(false);
-  // const [isVisibleBg, setIsVisibleBg] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
-  // const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User| null>(null);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -45,6 +53,26 @@ export default function RootLayout({
     setIsVisibleS(false);
     setIsVisible(false);
   };
+
+  useEffect(() => {
+    const auth = getAuth();
+    const timerId = setTimeout(() => {
+      if (!user) setShowDialog(true);
+    }, 3000); // 5 minutes in milliseconds
+
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        clearTimeout(timerId); // Clear timer if user signs in
+      }
+    });
+
+    return () => {
+      clearTimeout(timerId); // Clear timer on component unmount
+      unsubscribe();
+    };
+  }, [user]);
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -78,12 +106,12 @@ export default function RootLayout({
                   justify-center items-center"
             >
                 <div className={`fixed top-0 h-[100vh] z-20 w-[100%]  dark:bg-zinc-900
-                      bg-zinc-100 transition-all ${isVisible || isVisibleS
+                      bg-zinc-100 opacity-80 transition-all ${isVisible || isVisibleS
                       ? " bg-red-500 left-0"
                       : "bg-green-600 left-[-100%] "
                     } flex flex-col
                   justify-center items-center`} onClick={toggleVisible}>
-                    back
+                    
                 </div>
               <div className="flex justify-start items-start w-[100%] flex-col">
 
@@ -178,6 +206,22 @@ export default function RootLayout({
               </div>
             </div>
             <Toaster />
+            {/* Dialog for Not Signed In */}
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogContent>
+            <DialogTitle>Sign In Required</DialogTitle>
+            <DialogDescription>
+              You are not signed in. Please sign in to access all features.
+            </DialogDescription>
+            <div className="flex justify-end w-full gap-3">
+              <Link href={"/pages/auth/register"}  className="w-full">
+              <Button variant={"outline"} className="w-full hover:border-primary">Sign In</Button>
+              </Link>
+              <Button onClick={() => setShowDialog(false)}  className="">Close</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
           </ThemeDataProvider>
         </NextThemesProvider>
       </body>

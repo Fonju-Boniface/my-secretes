@@ -8,7 +8,7 @@ import Image from "next/image";
 // import HomeForm from "./HomeForm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { UserIcon } from "lucide-react";
+import { ChevronDown, UserIcon } from "lucide-react";
 
 // Define the type for the profile data
 interface ProfileData {
@@ -112,8 +112,8 @@ export default function Home() {
             </div>
 
             {/* <b>{profileData.firstName} and { profileData.lastName} </b> */}
-            <small className="mt-8 font-bold text-sm sm:text-base md:text-lg">
-              {profileData.hello} <b className="text-primary">{lastName ?? profileData.there}</b>
+            <small className="mt-8 font-bold text-sm sm:text-base md:text-lg ">
+              {profileData.hello} <b className="text-primary">{lastName ?? profileData.there}</b> Call me.. <b className="w-full flex justify-center items-center"><ChevronDown /></b>
             </small>
 
             <h3
