@@ -35,7 +35,7 @@ const Tabs = [
     value: "HomeForm",
     label: "HomeForm",
     description: "Create and manage Home.",
-    icon: <Briefcase />,
+    icon: <Home />,
     component: <HomeForm />,
   },
   

@@ -206,6 +206,15 @@ const SideBar = () => {
             <Progress />
           </div>
         </div>
+        {/* User profile */}
+        {user && (
+          <div className=" hidden"> 
+          
+              <p>{user.email}</p>
+              <small>Profile</small>
+      </div>
+        )}
+
       </div>
     </>
   );

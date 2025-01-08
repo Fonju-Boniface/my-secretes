@@ -5,6 +5,7 @@ import { ref, onValue, remove } from "firebase/database";
 import { database } from "@/firebase/firebase"; // Replace with your Firebase initialization file
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 
 type Contact = {
@@ -79,7 +80,7 @@ const GetContacts = () => {
           <li key={contact.id} className="border p-4 rounded shadow-sm">
             <div className="flex items-center space-x-4">
               {contact.photoURL && (
-                <img
+                <Image
                   src={contact.photoURL}
                   alt={`${contact.firstName} ${contact.lastName}`}
                   className="w-12 h-12 rounded-full"
