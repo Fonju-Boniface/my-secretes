@@ -83,6 +83,8 @@ const GetContacts = () => {
                 <Image
                   src={contact.photoURL}
                   alt={`${contact.firstName} ${contact.lastName}`}
+                  height={12}
+                  width={12}
                   className="w-12 h-12 rounded-full"
                 />
               )}

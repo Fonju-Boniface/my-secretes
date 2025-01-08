@@ -111,10 +111,10 @@ const ExperienceSummaryForm = () => {
     </div>
 
 
-    <div className="p-1 mt-7">
+    <div className=" mt-7">
       <h1 className="text-2xl font-bold mb-4 text-primary">Update Experience Summary Data </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+        <div className="w-full">
           <label className="block text-sm font-medium mb-1">Years of Experience</label>
           <Input
             type="text"
@@ -124,7 +124,7 @@ const ExperienceSummaryForm = () => {
             required
           />
         </div>
-        <div>
+        <div className="w-full">
           <label className="block text-sm font-medium mb-1">Description</label>
           <textarea
             value={description}
@@ -135,7 +135,7 @@ const ExperienceSummaryForm = () => {
         </div>
 
         {/* Social Media Links */}
-        <div>
+        <div className="w-full">
           <h3 className="text-lg font-semibold">Social Media Links</h3>
           {socialMedia.length > 0 ? (
             socialMedia.map((media, index) => (
@@ -145,7 +145,7 @@ const ExperienceSummaryForm = () => {
                     Icon: <b className="text-primary">{media.icon}</b>
                   </span>
                   <span className="flex-1">
-                    Link: <b className="text-primary">{media.link}</b>
+                    Link: <b className="text-primary"> <a href={media.link}>link</a></b>
                   </span>
                   <span className="flex-1">
                     Name: <b className="text-primary">{media.name}</b>
@@ -211,7 +211,7 @@ const ExperienceSummaryForm = () => {
               experienceSummary.socialMedia.map((media: SocialMedia, index: number) => (
                 <div key={index} className="mb-2 flex flex-col gap-2">
                   <span className="flex-1">Icon: <b className="text-primary">{media.icon}</b></span>
-                  <span className="flex-1">Link: <b className="text-primary">{media.link}</b></span>
+                  <span className="flex-1">Link: <b className="text-primary"><a href={media.link}>link</a></b></span>
                   <span className="flex-1">Name: <b className="text-primary">{media.name}</b></span>
                 </div>
               ))

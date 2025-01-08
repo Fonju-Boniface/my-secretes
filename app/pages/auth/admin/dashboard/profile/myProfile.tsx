@@ -96,7 +96,7 @@ const MyProfile = () => {
           </Button>
         </DialogTrigger>
 
-        <DialogContent>
+        <DialogContent  className="max-h-[70vh] overflow-auto">
           <DialogTitle>{profileData ? "Edit Home Data" : "Add Home Data"}</DialogTitle>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex justify-center items-center gap-4">

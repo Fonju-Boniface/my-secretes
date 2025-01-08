@@ -118,14 +118,14 @@ export default function HomeForm() {
 
   return (
     <div className="p-1 flex flex-col justify-between items-center">
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog  open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" className="bg-blue-500 text-white mt-24">
             {profileData ? "Edit Home Data" : "Add Home Data"}
           </Button>
         </DialogTrigger>
 
-        <DialogContent>
+        <DialogContent className="max-h-[70vh] overflow-auto">
           <DialogTitle>{profileData ? "Edit Home Data" : "Add Home Data"}</DialogTitle>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex justify-center items-center gap-4">
