@@ -135,8 +135,8 @@ const CreateSkills = () => {
   };
 
   return (
-    <div className="p-2 w-full">
-      <h1 className="text-xl font-bold mb-4">Creating skills</h1>
+    <div className="p-2 w-[100%] bg-red-700">
+      <h1 className="text-xl font-bold mb-4">Current skills</h1>
 
       {/* Add Button */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -275,9 +275,9 @@ const CreateSkills = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="space-y-4 mt-4 w-full">
+      <div className="space-y-4 mt-4 w-full bg-purple-800">
         {Object.entries(data).map(([id, item]) => (
-          <div key={id} className=" flex flex-col justify-between items-start w-full p-4 border border-gray-300 rounded">
+          <div key={id} className="  flex flex-col justify-between items-start w-full p-4 border border-gray-300 rounded">
             {item.imageUrl && (
               <Image
                 src={item.imageUrl}
@@ -320,6 +320,7 @@ const CreateSkills = () => {
           </div>
         ))}
       </div>
+      
 
       {/* Notification */}
       {notification && (

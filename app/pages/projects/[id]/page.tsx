@@ -77,9 +77,9 @@ const ProjectDetails = () => {
               ...data,
               comments: data.comments
                 ? Object.keys(data.comments).map((key) => ({
-                    id: key,
-                    ...data.comments[key],
-                  }))
+                  id: key,
+                  ...data.comments[key],
+                }))
                 : [],
             });
           } else {
@@ -177,41 +177,41 @@ const ProjectDetails = () => {
       </div>
       {/* Tags */}
       <div className="mt-4 grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {(
-  ["generalTools", "frontendTools", "backendTools", "researchTools", "deploymentTools"] as ProjectKeys[]
-).map((group) => (
-  <div
-    key={group}
-    className="flex flex-col items-start p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 text-center justify-between border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:dark:bg-zinc-800/30"
-  >
-    <h4 className="font-semibold">
-      {group
-        .replace(/([A-Z])/g, " $1")
-        .replace(/^./, (str) => str.toUpperCase())}
-      :
-    </h4>
-    <div className="flex flex-wrap">
-      {Array.isArray(project[group] as string[]) && (project[group] as string[]).length > 0 ? (
-        (project[group] as string[]).map((tag) => (
-          <span
-            key={tag}
-            className="text-primary border px-2 py-1 m-1 flex flex-col items-start rounded-lg shadow-md hover:shadow-lg transition duration-300 text-left justify-between border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:dark:bg-zinc-800/30"
+        {(
+          ["generalTools", "frontendTools", "backendTools", "researchTools", "deploymentTools"] as ProjectKeys[]
+        ).map((group) => (
+          <div
+            key={group}
+            className="flex flex-col items-start p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 text-center justify-between border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:dark:bg-zinc-800/30"
           >
-            {tag}
-          </span>
-        ))
-      ) : (
-        <span className="text-gray-500 text-left">
-          No {group.replace(/([A-Z])/g, " ").toLowerCase()} used for this project.
-        </span>
-      )}
-    </div>
-  </div>
-))}
+            <h4 className="font-semibold">
+              {group
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())}
+              :
+            </h4>
+            <div className="flex flex-wrap">
+              {Array.isArray(project[group] as string[]) && (project[group] as string[]).length > 0 ? (
+                (project[group] as string[]).map((tag) => (
+                  <span
+                    key={tag}
+                    className="text-primary border px-2 py-1 m-1 flex flex-col items-start rounded-lg shadow-md hover:shadow-lg transition duration-300 text-left justify-between border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:dark:bg-zinc-800/30"
+                  >
+                    {tag}
+                  </span>
+                ))
+              ) : (
+                <span className="text-gray-500 text-left">
+                  No {group.replace(/([A-Z])/g, " ").toLowerCase()} used for this project.
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
 
       </div>
 
-{/* nav */}
+      {/* nav */}
       <div className="flex justify-start items-center gap-3 fixed top-12 right-0 border-b border-gray-300
                 bg-white dark:border-neutral-800 dark:bg-black-800 dark:from-inherit lg:border dark:bg-black
                 z-10 w-[100%] sm:w-[calc(100%-15rem)] p-1">

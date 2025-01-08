@@ -5,7 +5,8 @@ import { ref, set, onValue } from "firebase/database";
 import { Button } from "@/components/ui/button"; // Replace with your Shadcn button
 import { Input } from "@/components/ui/input"; // Replace with your Shadcn input
 import { database } from "@/firebase/firebase";
-import Exp from "./Exp";
+import Exp from "@/app/pages/others/experience/experienceSummary/Exp";
+import Summary from "@/app/pages/others/experience/experienceSummary/Summary";
 
 interface SocialMedia {
   icon: string;
@@ -99,10 +100,19 @@ const ExperienceSummaryForm = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <>
+    <div className="flex flex-col gap-20">
+    <div>
     <Exp/>
-    <div className="p-1">
-      <h1 className="text-2xl font-bold mb-4 text-primary">Experience Summary</h1>
+      
+    </div>
+    <div>
+    <Summary/>
+
+    </div>
+
+
+    <div className="p-1 mt-7">
+      <h1 className="text-2xl font-bold mb-4 text-primary">Update Experience Summary Data </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">Years of Experience</label>
@@ -214,7 +224,7 @@ const ExperienceSummaryForm = () => {
         </div>
       )}
     </div>
-    </>
+    </div>
   );
 };
 

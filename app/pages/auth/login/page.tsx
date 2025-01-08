@@ -29,7 +29,7 @@ const Login = () => {
       if (isAdmin) {
         router.push("/pages/auth/admin/dashboard");
       } else {
-        router.push("/pages/user/dashboard");
+        router.push("/");
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unknown error occurred.");

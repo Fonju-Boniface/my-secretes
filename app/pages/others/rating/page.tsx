@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import * as ReactRating from "react-rating";
+import RatingsList from "./RatingsList";
+import { Card } from "@/components/ui/card";
 
 
 
@@ -143,11 +145,13 @@ const RatingForm = () => {
   const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   return (
-    <div className="w-full gap-16 flex flex-col justify-center min-h-[calc(100vh-4rem)]  items-center p-1">
+    <div className="w-full gap-16 flex flex-col justify-center  items-center p-1">
       <h2 className="text-3xl font-bold mb-6">Rate and review my work</h2>
 
-      <div className="flex gap-3 justify-center items-start">
-        <form onSubmit={handleSubmit} className="w-full sm:w-[500px] space-y-2">
+      <div className="flex flex-col gap-14   justify-center items-center w-full ">
+        <form onSubmit={handleSubmit} className=" w-full lg:w-[500px] space-y-2 h-[60vh] ">
+        <Card className="p-2">
+
           <div className={`${isAuthenticated ? "hidden" : " space-y-2"}`}>
             <div className=" justify-center items-center gap-4  hidden">
               <Input
@@ -211,7 +215,7 @@ const RatingForm = () => {
             </div>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col mt-5">
             <label htmlFor="message" className="font-semibold text-sm mb-1">
               Review
             </label>
@@ -220,7 +224,7 @@ const RatingForm = () => {
               name="message"
               value={formData.message}
               onChange={handleInputChange}
-              className={`p-2 py-4 border-b border-gray-300 hover:border-primary`}
+              className={`p-2 py-4 border-b border-gray-300 hover:border-primary resize-none`}
               placeholder="Type your Review"
               required
             />
@@ -229,7 +233,7 @@ const RatingForm = () => {
           </div>
 
           {/* Other input fields */}
-          <div className="flex flex-col">
+          <div className="flex flex-col mt-5">
             <label htmlFor="rating" className="font-semibold text-sm mb-1">
               Add Rate
             </label>
@@ -246,14 +250,15 @@ const RatingForm = () => {
           </div>
 
 
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-5">
             <Button type="submit" variant={"outline"} disabled={submitting} className="w-full mt-4 hover:border-primary">
               {submitting ? "Submitting..." : "Submit"}
             </Button>
           </div>
+        </Card>
         </form>
 
-        {/* <RatingsList /> */}
+        <RatingsList />
       </div>
 
       {notification && <p className="mt-4 text-green-500">{notification}</p>}

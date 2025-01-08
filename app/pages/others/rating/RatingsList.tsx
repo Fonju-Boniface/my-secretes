@@ -56,6 +56,7 @@ const RatingsList = () => {
 
     return () => unsubscribe();
   }, []);
+  // user role
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -131,80 +132,83 @@ const RatingsList = () => {
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <small className="text-sm font-bold mb-6">{ratings.length} {ratings.length > 1 ? "people" : "person"} have Rate and reviewed my work</small>
 
-      {/* Carousel to Display Ratings */}
-      <Carousel plugins={[plugin.current]}
-        className="w-full max-w-xs"
-        onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}
-      //  className="w-full max-w-sm mt-10"
-      >
-        <CarouselContent className="-ml-1">
 
-          {ratings.map((rating) => (
-            <CarouselItem key={rating.id}>
-              <div className="p-1">
-                <Card>
-                  <CardContent className="flex aspect-square items-center justify-between flex-col p-6" >
-                    <Image src={rating.photoURL} alt="Profile Image" width={50} height={50} className=' rounded-full p-2 border-primary border' />
-                    <h3 className="font-bold text-lg">{`${rating.firstName} ${rating.lastName}`}</h3>
-                    <p className="text-sm text-center mt-3">
-                      {rating.message}
-                      
-                    </p>
-                    <div className="flex gap-1">
-                      <Rating
-                        initialRating={rating.rating}
-                        readonly
-                        emptySymbol="fa fa-star text-gray-400"
-                        fullSymbol="fa fa-star text-yellow-500"
-                      />
-                      {/* <span>{rating.rating} stars</span> */}
-                    </div>
+    <div className="flex flex-col justify-center items-center h-[60vh] p-1">
+      <small className="text-xs font-bold mb-6">{ratings.length} {ratings.length > 1 ? "people" : "person"} have Rate and reviewed my work</small>
 
-                    <div className="flex justify-center items-center gap-2 w-full mt-4 ">
+    <Carousel plugins={[plugin.current]}
+       className="w-full max-w-xs"
+      onMouseEnter={plugin.current.stop}
+      onMouseLeave={plugin.current.reset}
+    //  className="w-full max-w-sm mt-10"
+    >
+      <CarouselContent>
 
-                      {role === "admin" && (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" className="w-full">
-                              Delete
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <p>Are you sure you want to delete this rating?</p>
-                            <DialogFooter>
-                              <Button
-                                variant="outline"
-                                onClick={() => handleDelete(rating.id)}
-                                disabled={deleting === rating.id}
-                              >
-                                {deleting === rating.id ? "Deleting..." : "Confirm"}
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      )}
-                      <Button variant="outline" className="w-full">
-                        <Link href={`mailto:${rating.email}`}>
-                        <Mail />
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+        {ratings.map((rating) => (
+          <CarouselItem className=' lg:w-full' key={rating.id}>
+            <div className="p-1 ">
 
-      {/* <p>Role: {role || "No role assigned"}</p> */}
-    </div>
+            <Card className='py-1'>
+              <CardContent className="flex aspect-square items-center justify-between flex-col" >
+                <Image src={rating.photoURL} alt="Profile Image" width={50} height={50} className=' rounded-full p-2 border-primary border' />
+                <h3 className="font-bold text-lg">{`${rating.firstName} ${rating.lastName}`}</h3>
+                <p className="text-sm text-center mt-3">
+                  {rating.message}
+                  
+                </p>
+                <div className="flex gap-1">
+                  <Rating
+                    initialRating={rating.rating}
+                    readonly
+                    emptySymbol="fa fa-star text-gray-400"
+                    fullSymbol="fa fa-star text-yellow-500"
+                  />
+                  {/* <span>{rating.rating} stars</span> */}
+                </div>
+
+                <div className="flex justify-center items-center gap-2 w-full mt-4 ">
+
+                  {role === "admin" && (
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                          Delete
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <p>Are you sure you want to delete this rating?</p>
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            onClick={() => handleDelete(rating.id)}
+                            disabled={deleting === rating.id}
+                          >
+                            {deleting === rating.id ? "Deleting..." : "Confirm"}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  )}
+                  <Button variant="outline" className="w-full">
+                    <Link href={`mailto:${rating.email}`}>
+                      <Mail />
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious className='-left-8' />
+      <CarouselNext className='-right-8' />
+      
+    </Carousel>
+
+   {/* <p>Role: {role || "No role assigned"}</p> */}
+</div>
   );
 };
 
