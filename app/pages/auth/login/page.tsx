@@ -1,82 +1,136 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { auth } from "@/firebase/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+} from "firebase/auth";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getDatabase, ref, set } from "firebase/database";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
 
   const router = useRouter();
+  const database = getDatabase();
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const saveUserToDatabase = (user: any, signInMethod: string) => {
+    const userRef = ref(database, `users/${user.uid}`);
+    const userData = {
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName || "Anonymous", // Get the user's name
+      imageUrl: user.photoURL || "",
+      role: "user", // Default role
+      signInMethod,
+      accountCreated: user.metadata.creationTime, // Account creation time
+      lastSignIn: user.metadata.lastSignInTime,   // Last sign-in time
+    };
+
+    return set(userRef, userData);
+  };
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
     setError(null);
-    setLoading(true);
+    setLoading("google");
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-      // Fetch user data from Firestore or Realtime Database (if needed)
-      // This is a placeholder for fetching role data. Replace with actual fetching logic.
-      const isAdmin = user.email === "admin@example.com"; // Example admin detection
+      await saveUserToDatabase(user, "google");
 
-      if (isAdmin) {
-        router.push("/pages/auth/admin/dashboard");
-      } else {
-        router.push("/");
-      }
+      // Redirect based on user role or logic
+      router.push("/");
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unknown error occurred.");
     } finally {
-      setLoading(false);
+      setLoading(null);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    const provider = new GithubAuthProvider();
+    setError(null);
+    setLoading("github");
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      await saveUserToDatabase(user, "github");
+
+      // Redirect based on user role or logic
+      router.push("/");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An unknown error occurred.");
+    } finally {
+      setLoading(null);
     }
   };
 
   return (
-    <div className="bg-gradient-to-b from-gray-800 to-black w-full flex justify-center items-center h-[100vh]">
-      <div className="p-6 bg-white rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full p-2 border border-gray-300 rounded shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              required
-            />
-          </div>
+    <div className="bg-gradient-to-b from-purple-500 to-purple-900 w-full flex justify-center items-center flex-col p-1 h-[100vh]">
+      <Image
+        src="/locked-with-key.svg"
+        alt="Google Icon"
+        width={30}
+        height={30}
+        className="w-30 h-30"
+      />
+
+      <h2 className="text-xl font-bold text-center mb-10 mt-1 text-white uppercase">Locked Code</h2>
+
+      <div className="p-2 min-w-[300px]  rounded bg-gradient-to-b from-purple-500 to-purple-900">
+        <div className="space-y-6 ">
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700 focus:outline-none"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+          <div className="flex flex-col space-y-2">
+
+            {/* Google Button */}
+            <Button
+              onClick={handleGoogleLogin}
+              className="w-full h-[50px] py-2 bg-blue-500 text-white text-1xl rounded hover:bg-blue-600 flex items-center justify-center space-x-2 p-2"
+            >
+              {loading === "google" ? (
+                <Loader2 className="animate-spin w-5 h-5" /> // Display loading spinner for Google
+              ) : (
+                <Image
+                  src="/google-logo.svg"
+                  alt="Google Icon"
+                  width={30}
+                  height={30}
+                  className="w-30 h-30"
+                />
+              )}
+              <span>Sign up with Google</span>
+            </Button>
+
+            {/* GitHub Button */}
+            <Button
+              onClick={handleGithubLogin}
+              className="w-full h-[50px] py-2 bg-gray-800 text-white text-1xl rounded hover:bg-gray-900 flex items-center justify-center space-x-2 p-2"
+            >
+              {loading === "github" ? (
+                <Loader2 className="animate-spin w-5 h-5" /> // Display loading spinner for GitHub
+              ) : (
+                <Image
+                  src="/github-logo.svg"
+                  alt="GitHub Icon"
+                  width={30}
+                  height={30}
+                  className="w-30 h-30"
+                />
+              )}
+              <span>Sign up with GitHub</span>
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

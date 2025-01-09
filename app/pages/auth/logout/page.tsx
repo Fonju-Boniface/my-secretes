@@ -61,7 +61,7 @@ const Logout = () => {
 
         </div>
       ) : (
-        <Link href="/pages/auth/register">
+        <Link href="/pages/auth/login">
           <Button variant={"outline"} className='rounded-full w-10 h-10'>
 
           <UserIcon className=" text-gray-500 cursor-pointer" />

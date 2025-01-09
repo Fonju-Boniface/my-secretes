@@ -28,6 +28,7 @@ import ExperienceSummaryForm from "./experience/experienceSummary/ExperienceSumm
 import CreateSkills from "./experience/skills/CreateSkills";
 import CreateCurrentSkills from "./experience/currentSkills/CreateCurrentSkills";
 import RatingsList from "./ratings/RatingsList";
+import UserManagement from "./Users/UserManagement";
 
 const Tabs = [
   
@@ -108,6 +109,13 @@ const Tabs = [
     description: "Create and manage Ratings List.",
     icon: <Phone />,
     component: <RatingsList />,
+  },
+  {
+    value: "Users",
+    label: "Users List",
+    description: "Create and manage users.",
+    icon: <User />,
+    component: <UserManagement />,
   },
 ];
 

@@ -125,3 +125,6 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
+
+
+// create a code that fetches all users in the users collection in the firebase realtime database.  get their  imageurl, names, email and loging type and 
