@@ -214,7 +214,7 @@ export default function RootLayout({
               You are not signed in. Please sign in to access all features.
             </DialogDescription>
             <div className="flex justify-end w-full gap-3">
-              <Link href={"/pages/auth/register"}  className="w-full">
+              <Link href={"/pages/auth/login"}  className="w-full">
               <Button variant={"outline"} className="w-full hover:border-primary">Sign In</Button>
               </Link>
               <Button onClick={() => setShowDialog(false)}  className="">Close</Button>
