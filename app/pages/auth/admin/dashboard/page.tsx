@@ -29,6 +29,7 @@ import CreateSkills from "./experience/skills/CreateSkills";
 import CreateCurrentSkills from "./experience/currentSkills/CreateCurrentSkills";
 import RatingsList from "./ratings/RatingsList";
 import UserManagement from "./Users/UserManagement";
+import Resume from "./resume/Resume";
 
 const Tabs = [
   
@@ -38,6 +39,13 @@ const Tabs = [
     description: "Create and manage Home.",
     icon: <Home />,
     component: <HomeForm />,
+  },
+  {
+    value: "Resume",
+    label: "Resume",
+    description: "Upload a resume.",
+    icon: <Home />,
+    component: <Resume />,
   },
   
   {
